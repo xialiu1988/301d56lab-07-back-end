@@ -1,7 +1,7 @@
 'use strict';
 const express=require('express');
 const cors=require('cors');
-require('dotenv').config;
+require('dotenv').config();
 
 const superagent=require('superagent');
 const PORT=process.env.PORT||3000;
@@ -32,32 +32,32 @@ res.send(location);
 
 //location constructor
 function Location(query,data){
-  this.search_query=queryData;
-  this.formatted_query=data.formatted_address;
-  this.latitude=data.geometry.location.lat;
-  this.longitude=data.geometry.location.lng;
+  this.search_query=query;
+  this.formatted_query=data.results[0].formatted_address;
+  this.latitude=data.results[0].geometry.location.lat;
+  this.longitude=data.results[0].geometry.location.lng;
 }
 
 
 
-app.get('/weather',(request,response)=>{
-  try{
-    const weatherData=searchToweather(request.query.data);
-    response.send(weatherData);
-  }
-  catch(error){handleError(error,response);}
-});
+// app.get('/weather',(request,response)=>{
+//   try{
+//     const weatherData=searchToweather(request.query.data);
+//     response.send(weatherData);
+//   }
+//   catch(error){handleError(error,response);}
+// });
 
-//helper
-function searchToweather(){
-  let arr=[];
-  const weaData=require('./data/darksky.json');
+// //helper
+// function searchToweather(){
+//   let arr=[];
+//   const weaData=require('./data/darksky.json');
 
-  for(let i=0;i<weaData.daily.data.length;i++){
-    arr.push( new Weather(weaData.daily.data[i]));
-  }
-  return arr;
-}
+//   for(let i=0;i<weaData.daily.data.length;i++){
+//     arr.push( new Weather(weaData.daily.data[i]));
+//   }
+//   return arr;
+// }
 
 function Weather(demo){
   this.time=new Date(demo.time*1000).toDateString();
