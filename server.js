@@ -61,6 +61,31 @@ function Weather(demo){
 
 
 
+app.get('/event',getEvent);
+function getEvent(request,response){
+const eventUrl=`https://www.eventbriteapi.com/v3/events/search?location.address=${request.query.data}&location.within=10km&expand=venue`;
+superagent.get(eventUrl)
+.set('Authorization',`Bearer ${process.env.PERSONAL_TOKEN}`)
+.then(result=>{
+  console.log(result.body.events);
+  const eventSummaries=result.body.events.map(item=>{
+    const summary =new Event(item);   
+    return summary;
+  });
+  response.send(eventSummaries);
+})
+
+}
+
+
+function Event(data){
+this.link=data.url;
+this.name=data.name.text;
+this.event_date=data.start.local;
+this.summary=data.summary;
+}
+
+
 //error handling
 function handleError(error,res){
   res.status(500).send('error');
