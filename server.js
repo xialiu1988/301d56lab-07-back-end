@@ -28,8 +28,6 @@ res.send(location);
 });
 
 
-
-
 //location constructor
 function Location(query,data){
   this.search_query=query;
@@ -39,25 +37,22 @@ function Location(query,data){
 }
 
 
+app.get('/weather',(request,response)=>{
+  try{
+    console.log(request.query.data.latitude);
+    const weatherUrl=`https://api.darksky.net/forecast/${process.env.DARKSKY_KEY}/${request.query.data.latitude},${request.query.data.longitude}`;
+  superagent.get(weatherUrl)
+  .then(result=>{
+    const weatherSummaries=result.body.daily.data.map(el=>{
+    return new Weather(el);
+    });
+    response.send(weatherSummaries);
+  })
+  }
+  catch(error){handleError(error,response);}
+});
 
-// app.get('/weather',(request,response)=>{
-//   try{
-//     const weatherData=searchToweather(request.query.data);
-//     response.send(weatherData);
-//   }
-//   catch(error){handleError(error,response);}
-// });
 
-// //helper
-// function searchToweather(){
-//   let arr=[];
-//   const weaData=require('./data/darksky.json');
-
-//   for(let i=0;i<weaData.daily.data.length;i++){
-//     arr.push( new Weather(weaData.daily.data[i]));
-//   }
-//   return arr;
-// }
 
 function Weather(demo){
   this.time=new Date(demo.time*1000).toDateString();
