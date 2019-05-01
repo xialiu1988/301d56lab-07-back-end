@@ -61,9 +61,9 @@ function Weather(demo){
 
 
 
-app.get('/event',getEvent);
+app.get('/events',getEvent);
 function getEvent(request,response){
-const eventUrl=`https://www.eventbriteapi.com/v3/events/search?location.address=${request.query.data}&location.within=10km&expand=venue`;
+const eventUrl=`https://www.eventbriteapi.com/v3/events/search?location.longitude=${request.query.data.longitude}&location.latitude=${request.query.data.latitude}&expand=venue`;
 superagent.get(eventUrl)
 .set('Authorization',`Bearer ${process.env.PERSONAL_TOKEN}`)
 .then(result=>{
