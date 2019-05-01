@@ -3,6 +3,7 @@ const express=require('express');
 const cors=require('cors');
 require('dotenv').config;
 
+const superagent=require('superagent');
 const PORT=process.env.PORT||3000;
 const app=express();
 
@@ -10,14 +11,16 @@ app.use(cors());
 
 app.use(express.static('./'));
 
-let queryData='';
 
 app.get('/location',(req,res)=>{
   try{
-    console.log(req.query);
-    const locationData=getLocation();
-    queryData=req.query.data;
-    res.send(locationData);
+   const queryData=req.query.data;
+   let geoUrl=`https://maps.googleapis.com/maps/api/geocode/json?address=${queryData}&key=${process.env.GEOCODE_API_KEY}`;
+    superagent.get(geoUrl)
+    .end((err,apiResponse)=>{
+const location=new Location(queryData,apiResponse.body);
+res.send(location);
+    }); 
   }
   catch(error){
     handleError(error);
@@ -25,16 +28,10 @@ app.get('/location',(req,res)=>{
 });
 
 
-//helper to get locatiodata
-function getLocation(){
-  const geoData=require('./data/geo.json');
-  const location=new Location(geoData.results[0]);
-  return location;
-}
 
 
 //location constructor
-function Location(data){
+function Location(query,data){
   this.search_query=queryData;
   this.formatted_query=data.formatted_address;
   this.latitude=data.geometry.location.lat;
